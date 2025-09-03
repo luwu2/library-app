@@ -25,6 +25,10 @@
         $stmt = $conn->prepare("INSERT INTO books (title, author, year_published) VALUES (?, ?, ?)");
         $stmt->bind_param("ssi", $title, $author, $year);
 
+        $title = $_POST["title"];
+        $author = $_POST["author"];
+        $year = $_POST["year"];
+
         if ($stmt->execute()) {
             // redirects to index.php  
             header("Location: index.php");
