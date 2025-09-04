@@ -128,7 +128,6 @@
     </table>
     <?php
 
-    // --- Pagination links ---
     $total_pages = ceil($total_rows / $limit);
 
     echo "<div style='margin-top:20px;'>";
@@ -148,14 +147,15 @@
         // bolds page or adds link
         if ($i == $page) {
             echo "<strong>$i</strong> ";
-        } else {
-            $url = "index.php?page=$i";
-            if (isset($_GET['search']) && $_GET['search'] !== '') {
-                // append search to url
-                $url .= "&search=" . urlencode($_GET['search']);
-            }
-            echo "<a href='$url'>$i</a> ";
+            continue;
         }
+        
+        $url = "index.php?page=$i";
+        if (isset($_GET['search']) && $_GET['search'] !== '') {
+            // append search to url
+            $url .= "&search=" . urlencode($_GET['search']);
+        }
+        echo "<a href='$url'>$i</a> ";
     }
 
     // display next button
