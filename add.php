@@ -22,12 +22,13 @@
 <?php 
     // adds information from form to library table
     if($_SERVER["REQUEST_METHOD"] == "POST") {
-        $stmt = $conn->prepare("INSERT INTO books (title, author, year_published) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $title, $author, $year);
-
+        
         $title = $_POST["title"];
         $author = $_POST["author"];
         $year = $_POST["year"];
+
+        $stmt = $conn->prepare("INSERT INTO books (title, author, year_published) VALUES (?, ?, ?)");
+        $stmt->bind_param("ssi", $title, $author, $year);
 
         if ($stmt->execute()) {
             // redirects to index.php  

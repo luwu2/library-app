@@ -35,20 +35,23 @@
     $limit = 15; 
 
     // determine page from url
-    $page = isset($_GET["page"]) ? (int)$_GET["page"] :1;
+    if (isset($_GET['page'])) {
+        $page = (int)$_GET['page'];
+    } else {
+        $page = 1;
+    }
     if ($page < 1) {
         $page = 1;
     }
 
     $offset = ($page -1) * $limit;
 
-    // --- Case 1: Search is active ---
+    // Get rows for current page accounting for search
     if (isset($_GET['search']) && $_GET['search'] !== '') {
         $search = $_GET['search'];
 
-        // Main query with LIMIT + OFFSET
         $stmt = $conn->prepare("SELECT * FROM books 
-                        WHERE title LIKE CONCAT('%', ?, '%') 
+                        WHERE title LIKE CONCAT('%', ?, '%')
                            OR author LIKE CONCAT('%', ?, '%') 
                            OR year_published LIKE CONCAT('%', ?, '%')
                         LIMIT ? OFFSET ?");
@@ -56,7 +59,7 @@
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // Count total rows for pagination
+        // count total rows for pagination
         $count_stmt = $conn->prepare("SELECT COUNT(*) as count FROM books 
                                       WHERE title LIKE CONCAT('%', ?, '%') 
                                          OR author LIKE CONCAT('%', ?, '%') 
@@ -66,7 +69,7 @@
         $total_rows = $count_stmt->get_result()->fetch_assoc()['count'];
 
     } else {
-        // --- Case 2: No search, just show all with pagination ---
+        // Get rows for current page without search
         $stmt = $conn->prepare("SELECT * FROM books LIMIT ? OFFSET ?");
         $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
@@ -103,7 +106,7 @@
         echo "<td>
             <a href='update.php?id={$row['book_id']}'>Edit</a> |
             <a href='delete.php?id={$row['book_id']}'
-            onclick=\"return confirm('Are you sure you want to delete this book?');\">Delete</a> |";
+            onclick=\"return confirm('Are you sure you want to delete {$row['title']}?');\">Delete</a> |";
 
         // displays only either available or checked out 
         if ($row['status'] === 'available') {
