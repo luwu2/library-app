@@ -45,6 +45,7 @@
                                 WHERE book_id=$id";
 
         if ($conn->query($sql) === TRUE) {
+            $conn->close();
             // redirects to index.php
             header("Location: index.php");
             exit;

@@ -31,6 +31,8 @@
         $stmt->bind_param("ssi", $title, $author, $year);
 
         if ($stmt->execute()) {
+            $stmt->close();
+            $conn->close();
             // redirects to index.php  
             header("Location: index.php");
             exit;

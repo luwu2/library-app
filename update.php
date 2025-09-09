@@ -13,7 +13,7 @@
     }
 
     // finds row in table using id
-    $id = $_GET["id"];
+    $id = (int)$_GET["id"];
     $result = $conn->query("SELECT * FROM books WHERE book_id=$id");
     $row = $result->fetch_assoc();
     ?>
@@ -25,7 +25,7 @@
     <form method="POST"> 
         Title: <input type="text" name="title" value="<?php echo $row['title']; ?>" required><br>
         Author: <input type="text" name="author" value="<?php echo $row['author']; ?>" required><br>
-        Year: <input type="number" name="year" value="<?php echo $row['year_published']; ?>" ><br>
+        Year: <input type="number" name="year" value="<?php echo $row['year_published']; ?>" required><br>
         
         <input type="submit" name=submit value="Update Book">
     </form><br>
@@ -42,8 +42,15 @@
         $author = $_POST['author'];
         $year = $_POST['year'];
 
-        $sql = "UPDATE books SET title='$title', author='$author', year_published=$year WHERE book_id=$id";
-        if ($conn->query($sql) === TRUE) {
+        $stmt = $conn->prepare("UPDATE books 
+                        SET title = ?, author = ?, year_published = ? 
+                        WHERE book_id = ?");
+
+        $stmt->bind_param("ssii", $title, $author, $year, $id); 
+
+        if ($stmt->execute() === TRUE) {
+            $stmt->close();
+            $conn->close();
             // redirects to index.php
             header("Location: index.php");
             exit;
@@ -56,3 +63,4 @@
 
 </body>
 </html>
+

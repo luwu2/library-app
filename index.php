@@ -74,6 +74,7 @@
         $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
         $result = $stmt->get_result();
+        $stmt->close();
 
         $total_result = $conn->query("SELECT COUNT(*) as count FROM books");
         $total_rows = $total_result->fetch_assoc()['count'];
@@ -172,3 +173,7 @@
     ?>
 </body>
 </html>
+
+<?php 
+$conn->close();
+?>

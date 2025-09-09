@@ -12,6 +12,8 @@
     $stmt->bind_param("i", $id);
    
     if($stmt->execute() === TRUE) {
+        $stmt->close();
+        $conn->close();
         // redirects to index.php
         header("Location: index.php");
         exit;
@@ -21,3 +23,4 @@
     }
 
 ?>
+
