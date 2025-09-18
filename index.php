@@ -24,6 +24,7 @@
             <th>Title</th>
             <th>Author</th>
             <th>Year</th>
+            <th>ISBN</th>
             <th>Status</th>
             <th>Actions</th>
             <th>Checked Out By</th>
@@ -46,16 +47,24 @@
 
     $offset = ($page -1) * $limit;
 
-    // Get rows for current page accounting for search
+    // get rows for current page accounting for search
+
+    /**
+     * ADD SEARCH BY ISBN
+     */
     if (isset($_GET['search']) && $_GET['search'] !== '') {
         $search = $_GET['search'];
 
+        $s_title = '%' . str_replace(' ', '%', $search) .'%';
+        $s_author = '%' . str_replace(' ', '%', $search) .'%';
+        $s_year = '%' . str_replace(' ', '%', $search) .'%';
+
         $stmt = $conn->prepare("SELECT * FROM books 
-                        WHERE title LIKE CONCAT('%', ?, '%')
-                           OR author LIKE CONCAT('%', ?, '%') 
-                           OR year_published LIKE CONCAT('%', ?, '%')
+                        WHERE title LIKE '$s_title' 
+                           OR author LIKE '$s_author'
+                           OR year_published LIKE '$s_year'
                         LIMIT ? OFFSET ?");
-        $stmt->bind_param("sssii", $search, $search, $search, $limit, $offset);
+        $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -67,6 +76,7 @@
         $count_stmt->bind_param("sss", $search, $search, $search);
         $count_stmt->execute();
         $total_rows = $count_stmt->get_result()->fetch_assoc()['count'];
+        $count_stmt->close();
 
     } else {
         // Get rows for current page without search
@@ -93,6 +103,8 @@
         } else {
             echo "<td>{$row['year_published']}</td>"; 
         }
+
+        echo "<td>{$row['isbn']}</td>";
 
         // format status for diplay
         if($row['status'] == 'checked_out') {

@@ -26,6 +26,7 @@
         Title: <input type="text" name="title" value="<?php echo $row['title']; ?>" required><br>
         Author: <input type="text" name="author" value="<?php echo $row['author']; ?>" required><br>
         Year: <input type="number" name="year" value="<?php echo $row['year_published']; ?>" required><br>
+        ISBN: <input type="text" name="isbn" value="<?php echo $row['isbn']; ?>" required maxlength="5"><br>
         
         <input type="submit" name=submit value="Update Book">
     </form><br>
@@ -41,12 +42,13 @@
         $title = $_POST['title'];
         $author = $_POST['author'];
         $year = $_POST['year'];
+        $isbn = $_POST['isbn'];
 
         $stmt = $conn->prepare("UPDATE books 
-                        SET title = ?, author = ?, year_published = ? 
+                        SET title = ?, author = ?, year_published = ?, isbn = ?
                         WHERE book_id = ?");
 
-        $stmt->bind_param("ssii", $title, $author, $year, $id); 
+        $stmt->bind_param("ssisi", $title, $author, $year, $isbn, $id); 
 
         if ($stmt->execute() === TRUE) {
             $stmt->close();

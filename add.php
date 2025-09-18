@@ -11,6 +11,7 @@
         Title: <input type="text" name="title"><br><br>
         Author: <input type="text" name="author"><br><br>
         Year: <input type="number" name="year"><br><br>
+        ISBN: <input type="text" name="isbn" required maxlength="5"><br><br>
         <button type="submit" name="submit">Add Book</button>
     </form>
 
@@ -26,9 +27,10 @@
         $title = $_POST["title"];
         $author = $_POST["author"];
         $year = $_POST["year"];
+        $isbn = $_POST["isbn"];
 
-        $stmt = $conn->prepare("INSERT INTO books (title, author, year_published) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $title, $author, $year);
+        $stmt = $conn->prepare("INSERT INTO books (title, author, year_published, isbn) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssis", $title, $author, $year, $isbn);
 
         if ($stmt->execute()) {
             $stmt->close();
